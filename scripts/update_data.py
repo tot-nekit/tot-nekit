@@ -45,6 +45,9 @@ def main():
         raise SystemExit("GitHub user missing; previous data preserved.")
     if any(repo.get("isPrivate") for repo in user["repositories"]["nodes"]):
         raise SystemExit("Refusing to write private repository metadata.")
+    excluded = {name.casefold() for name in config.get('excluded_repositories', [])}
+    user['repositories']['nodes'] = [repo for repo in user['repositories']['nodes']
+                                     if repo['name'].casefold() not in excluded]
     output = {"updated": datetime.now(timezone.utc).date().isoformat(), **user}
     path = ROOT / "data" / "github.json"
     path.parent.mkdir(exist_ok=True)

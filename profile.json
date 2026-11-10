@@ -4,20 +4,19 @@
   "last_name": "Lomovtsev",
   "tagline": "Web apps, bots & useful little systems.",
   "intro": "Turning ideas into things people can use.",
-  "featured": ["orbita", "vstrecha", "DiscordBot"],
+  "featured": ["orbita", "vstrecha"],
+  "excluded_repositories": ["DiscordBot"],
   "project_stacks": {
     "orbita": "Python · Web application",
-    "vstrecha": "Python · FastAPI · PostgreSQL · Docker",
-    "DiscordBot": "JavaScript · Discord"
+    "vstrecha": "Python · FastAPI · PostgreSQL · Docker"
   },
   "project_descriptions": {
     "orbita": "A personal planner for everyday life, on your phone and desktop.",
-    "vstrecha": "Lost & found, brought together. Maps, community and AI-assisted moderation.",
-    "DiscordBot": "A Discord bot built with JavaScript."
+    "vstrecha": "Lost & found, brought together. Maps, community and AI-assisted moderation."
   },
   "tiles": [
     {"id": "build", "title": "BUILD", "subtitle": "Web apps & products", "detail": "Ideas into interfaces.", "color": "#2455ed", "ink": "#ffffff", "url": "https://github.com/tot-nekit?tab=repositories"},
-    {"id": "automate", "title": "AUTOMATE", "subtitle": "Bots & workflows", "detail": "Less routine. More doing.", "color": "#eb624d", "ink": "#261e1a", "url": "https://github.com/tot-nekit/DiscordBot"},
+    {"id": "automate", "title": "AUTOMATE", "subtitle": "Bots & workflows", "detail": "Less routine. More doing.", "color": "#eb624d", "ink": "#261e1a", "url": "https://github.com/tot-nekit?tab=repositories"},
     {"id": "explore", "title": "EXPLORE", "subtitle": "Experiments & ideas", "detail": "Always something next.", "color": "#f4ce54", "ink": "#261e1a", "url": "https://github.com/tot-nekit?tab=repositories"}
   ]
 }

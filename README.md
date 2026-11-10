@@ -8,7 +8,7 @@ I build web applications, bots and automation tools. My projects range from ever
 
 <p>
 <a href="https://github.com/tot-nekit?tab=repositories"><picture><source media="(prefers-color-scheme: dark)" srcset="./cards/dark/build.svg" /><img src="./cards/build.svg" width="32.5%" alt="BUILD: Web apps &amp; products" /></picture></a>
-<a href="https://github.com/tot-nekit/DiscordBot"><picture><source media="(prefers-color-scheme: dark)" srcset="./cards/dark/automate.svg" /><img src="./cards/automate.svg" width="32.5%" alt="AUTOMATE: Bots &amp; workflows" /></picture></a>
+<a href="https://github.com/tot-nekit?tab=repositories"><picture><source media="(prefers-color-scheme: dark)" srcset="./cards/dark/automate.svg" /><img src="./cards/automate.svg" width="32.5%" alt="AUTOMATE: Bots &amp; workflows" /></picture></a>
 <a href="https://github.com/tot-nekit?tab=repositories"><picture><source media="(prefers-color-scheme: dark)" srcset="./cards/dark/explore.svg" /><img src="./cards/explore.svg" width="32.5%" alt="EXPLORE: Experiments &amp; ideas" /></picture></a>
 </p>
 
@@ -17,8 +17,6 @@ I build web applications, bots and automation tools. My projects range from ever
 <a href="https://github.com/tot-nekit/orbita"><picture><source media="(prefers-color-scheme: dark)" srcset="./cards/dark/repo-orbita.svg" /><img src="./cards/repo-orbita.svg" width="100%" alt="orbita — view repository" /></picture></a>
 
 <a href="https://github.com/tot-nekit/vstrecha"><picture><source media="(prefers-color-scheme: dark)" srcset="./cards/dark/repo-vstrecha.svg" /><img src="./cards/repo-vstrecha.svg" width="100%" alt="vstrecha — view repository" /></picture></a>
-
-<a href="https://github.com/tot-nekit/DiscordBot"><picture><source media="(prefers-color-scheme: dark)" srcset="./cards/dark/repo-DiscordBot.svg" /><img src="./cards/repo-DiscordBot.svg" width="100%" alt="DiscordBot — view repository" /></picture></a>
 
 ### Toolkit
 

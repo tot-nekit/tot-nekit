@@ -163,6 +163,10 @@ def tiles():
 def repositories():
     public = {r['name']: r for r in DATA['repositories']['nodes']}
     featured = [public[name] for name in CONFIG['featured'] if name in public]
+    expected = {'repo-'+repo['name']+'.svg' for repo in featured}
+    for existing in OUT.glob('repo-*.svg'):
+        if existing.name not in expected:
+            existing.unlink()
     for i, repo in enumerate(featured):
         desc = CONFIG.get('project_descriptions', {}).get(repo['name']) or repo.get('description') or 'A public project. Explore the code on GitHub.'
         # Cyrillic needs the sans-serif fallback; only the title uses Instrument Serif.
