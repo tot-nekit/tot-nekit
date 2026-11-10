@@ -1691,9 +1691,33 @@
     "nodes": [
       {
         "name": "tot-nekit",
-        "description": "Animated SVG profile · web apps, bots & useful little systems",
+        "description": "Nikita Lomovtsev · Web apps, bots & automation · Animated SVG portfolio with daily GitHub activity",
         "url": "https://github.com/tot-nekit/tot-nekit",
         "stargazerCount": 0,
+        "forkCount": 0,
+        "isPrivate": false,
+        "primaryLanguage": {
+          "name": "Python",
+          "color": "#3572A5"
+        }
+      },
+      {
+        "name": "DiscordBot",
+        "description": "A Discord bot built with JavaScript.",
+        "url": "https://github.com/tot-nekit/DiscordBot",
+        "stargazerCount": 0,
+        "forkCount": 0,
+        "isPrivate": false,
+        "primaryLanguage": {
+          "name": "JavaScript",
+          "color": "#f1e05a"
+        }
+      },
+      {
+        "name": "vstrecha",
+        "description": "Lost & found platform with maps, community chat and AI-assisted moderation. Built with FastAPI and PostgreSQL.",
+        "url": "https://github.com/tot-nekit/vstrecha",
+        "stargazerCount": 1,
         "forkCount": 0,
         "isPrivate": false,
         "primaryLanguage": {
@@ -1733,18 +1757,6 @@
         "forkCount": 0,
         "isPrivate": false,
         "primaryLanguage": null
-      },
-      {
-        "name": "vstrecha",
-        "description": null,
-        "url": "https://github.com/tot-nekit/vstrecha",
-        "stargazerCount": 1,
-        "forkCount": 0,
-        "isPrivate": false,
-        "primaryLanguage": {
-          "name": "Python",
-          "color": "#3572A5"
-        }
       },
       {
         "name": "application_ios_daily-tasks",
@@ -1787,18 +1799,6 @@
         "forkCount": 0,
         "isPrivate": false,
         "primaryLanguage": null
-      },
-      {
-        "name": "DiscordBot",
-        "description": null,
-        "url": "https://github.com/tot-nekit/DiscordBot",
-        "stargazerCount": 0,
-        "forkCount": 0,
-        "isPrivate": false,
-        "primaryLanguage": {
-          "name": "JavaScript",
-          "color": "#f1e05a"
-        }
       }
     ]
   }

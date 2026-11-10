@@ -5,6 +5,11 @@
   "tagline": "Web apps, bots & useful little systems.",
   "intro": "Turning ideas into things people can use.",
   "featured": ["orbita", "vstrecha", "DiscordBot"],
+  "project_stacks": {
+    "orbita": "Python · Web application",
+    "vstrecha": "Python · FastAPI · PostgreSQL · Docker",
+    "DiscordBot": "JavaScript · Discord"
+  },
   "project_descriptions": {
     "orbita": "A personal planner for everyday life, on your phone and desktop.",
     "vstrecha": "Lost & found, brought together. Maps, community and AI-assisted moderation.",

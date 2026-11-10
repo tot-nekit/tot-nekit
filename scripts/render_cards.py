@@ -3,6 +3,8 @@ import base64
 import calendar
 import json
 import os
+import subprocess
+import sys
 import textwrap
 from collections import defaultdict
 from datetime import date, timedelta
@@ -11,6 +13,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 STATIC = os.environ.get("STATIC") == "1"
+THEME = os.environ.get('CARD_THEME', 'light')
 OUT = Path(os.environ.get("CARD_OUTPUT", ROOT / "cards"))
 OUT.mkdir(parents=True, exist_ok=True)
 CONFIG = json.loads((ROOT / "profile.json").read_text())
@@ -43,6 +46,16 @@ def svg(name, width, height, content, title, delay=0):
     value = f'''<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" role="img" aria-labelledby="title">
 <title id="title">{escape(title)}</title><style>{style}</style>
 <rect x=".5" y=".5" width="{width-1}" height="{height-1}" rx="14" fill="{PAPER}" stroke="{LINE}"/>{content}</svg>'''
+    if THEME == 'dark':
+        for light, dark in {
+            PAPER:'#151b24', INK:'#eeeae2', MUTED:'#a8b1bd', LINE:'#303a48',
+            BLUE:'#83a5ff', '#e5e7ed':'#232d3b', '#bbcaff':'#314b83',
+            '#83a1fb':'#486ab8', '#4f78f3':'#6489dc', '#d9d7cc':'#3d4b60',
+        }.items():
+            value = value.replace(light, dark)
+        # Keep the blue tile saturated: the dark palette changes the page accents only.
+        if name == 'build':
+            value = value.replace('fill="#83a5ff"', 'fill="#2455ed"')
     (OUT / f"{name}.svg").write_text(value)
 
 
@@ -64,6 +77,14 @@ def hero():
               text(710, 300, 'MAKE IT USEFUL.', 10, MUTED, 'mono', 'text-anchor="middle"')]
     parts += [f'<path d="M36 320h808" stroke="{LINE}"/>', text(38, 347, 'PYTHON  /  JAVASCRIPT  /  TYPESCRIPT', 11, MUTED, 'mono'), text(842, 347, 'CODE → PRODUCT', 11, BLUE, 'mono', 'text-anchor="end"')]
     svg('hero', 880, 370, ''.join(parts), f'{CONFIG["first_name"]} {CONFIG["last_name"]} — {CONFIG["tagline"]}')
+    mobile = [text(24, 32, '@'+CONFIG['username']+' / PERSONAL WORKSPACE', 11, MUTED, 'mono'),
+              '<g class="enter">', text(23, 108, CONFIG['first_name'], 72, INK, 'serif'),
+              text(23, 183, CONFIG['last_name']+'.', 72, BLUE, 'serif'), '</g>',
+              text(25, 228, 'Web applications, bots & automation.', 18),
+              text(25, 259, CONFIG['intro'], 15, MUTED),
+              f'<path d="M24 284h472" stroke="{LINE}"/>',
+              text(25, 314, 'PYTHON / JAVASCRIPT / TYPESCRIPT', 11, MUTED, 'mono')]
+    svg('hero-mobile', 520, 338, ''.join(mobile), CONFIG['first_name']+' '+CONFIG['last_name'])
 
 
 def heatmap():
@@ -71,7 +92,7 @@ def heatmap():
     counts = [d['contributionCount'] for d in days()]
     peak = max(counts, default=0)
     palette = ['#e5e7ed', '#bbcaff', '#83a1fb', '#4f78f3', BLUE]
-    parts = [text(30, 36, 'A YEAR IN CODE', 11, MUTED, 'mono'), text(850, 36, 'PUBLIC CONTRIBUTIONS', 10, MUTED, 'mono', 'text-anchor="end"')]
+    parts = [text(30, 36, 'A YEAR IN CODE', 11, MUTED, 'mono'), text(850, 36, 'GITHUB CONTRIBUTIONS', 10, MUTED, 'mono', 'text-anchor="end"')]
     for col, week in enumerate(weeks):
         for d in week['contributionDays']:
             day = date.fromisoformat(d['date'])
@@ -149,9 +170,28 @@ def repositories():
         for j, line in enumerate(textwrap.wrap(desc, width=94)[:2]):
             parts.append(text(31, 117+j*22, line, 14, MUTED))
         lang = repo.get('primaryLanguage') or {'name': 'Project', 'color': BLUE}
-        parts += [f'<circle cx="35" cy="169" r="4" fill="{lang.get("color") or BLUE}"/>', text(48, 173, lang['name'], 11, MUTED), text(850, 173, f'{repo["stargazerCount"]} STARS   /   {repo["forkCount"]} FORKS', 10, MUTED, 'mono', 'text-anchor="end"')]
+        stack = CONFIG.get('project_stacks', {}).get(repo['name'], lang['name'])
+        parts += [f'<circle cx="35" cy="169" r="4" fill="{lang.get("color") or BLUE}"/>', text(48, 173, stack, 11, MUTED), text(850, 173, 'VIEW PROJECT ↗', 10, BLUE, 'mono', 'text-anchor="end"')]
         svg('repo-'+repo['name'], 880, 196, ''.join(parts), repo['name']+' — '+desc, .65+i*.1)
     return featured
+
+
+def toolkit():
+    parts = [text(30, 36, 'THE TOOLKIT', 11, MUTED, 'mono'), text(30, 82, 'Built with purpose.', 38, INK, 'serif')]
+    for x, heading, line1, line2 in [
+        (30, '01 / BACKEND', 'Python · FastAPI', 'APIs & application logic'),
+        (316, '02 / INTERFACES', 'JavaScript · TypeScript', 'Web apps & bot interfaces'),
+        (602, '03 / DELIVERY', 'PostgreSQL · Docker', 'Data, containers & workflows'),
+    ]:
+        parts += [text(x, 130, heading, 10, BLUE, 'mono'), text(x, 164, line1, 17), text(x, 192, line2, 12, MUTED)]
+    svg('toolkit', 880, 222, ''.join(parts), 'Toolkit: Python, FastAPI, JavaScript, TypeScript, PostgreSQL, Docker', .4)
+
+
+def picture(name, alt, width='100%'):
+    mobile = ''
+    if name == 'hero':
+        mobile = '<source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="./cards/dark/hero-mobile.svg" /><source media="(max-width: 600px)" srcset="./cards/hero-mobile.svg" />'
+    return f'<picture>{mobile}<source media="(prefers-color-scheme: dark)" srcset="./cards/dark/{name}.svg" /><img src="./cards/{name}.svg" width="{width}" alt="{escape(alt, quote=True)}" /></picture>'
 
 
 def main():
@@ -159,27 +199,36 @@ def main():
     heatmap()
     activity()
     tiles()
+    toolkit()
     featured = repositories()
     if STATIC or os.environ.get('CARD_OUTPUT'):
         return
+    env = os.environ.copy()
+    env.update(CARD_THEME='dark', CARD_OUTPUT=str(ROOT/'cards/dark'))
+    subprocess.run([sys.executable, str(Path(__file__).resolve())], env=env, check=True)
     md = [f'<!-- Generated by scripts/render_cards.py. Edit profile.json to customize. -->\n',
-          f'<img src="./cards/hero.svg" width="100%" alt="{escape(CONFIG["first_name"]+" "+CONFIG["last_name"])} — {escape(CONFIG["tagline"])}" />\n',
-          '<img src="./cards/heatmap.svg" width="100%" alt="My contributions over the past year" />\n',
-          '<img src="./cards/activity.svg" width="100%" alt="Monthly contributions, active days and streaks" />\n', '<p>']
+          picture('hero', CONFIG['first_name']+' '+CONFIG['last_name']+' — '+CONFIG['tagline'])+'\n',
+          '[Projects](#selected-work) · [Toolkit](#toolkit) · [Activity](#activity) · [All repositories](https://github.com/tot-nekit?tab=repositories)\n',
+          'I build web applications, bots and automation tools. My projects range from everyday planning to community services and AI-assisted workflows.\n', '<p>']
     for tile in CONFIG['tiles']:
-        md.append(f'<a href="{escape(tile["url"], quote=True)}"><img src="./cards/{tile["id"]}.svg" width="32.5%" alt="{tile["title"]}: {tile["subtitle"]}" /></a>')
+        md.append(f'<a href="{escape(tile["url"], quote=True)}">'+picture(tile['id'], tile['title']+': '+tile['subtitle'], '32.5%')+'</a>')
     md += ['</p>\n', '### Selected work\n']
     for repo in featured:
-        md.append(f'<a href="{repo["url"]}"><img src="./cards/repo-{repo["name"]}.svg" width="100%" alt="{escape(repo["name"])} — view repository" /></a>\n')
-    md += ['---\n', f'[Explore my repositories](https://github.com/{CONFIG["username"]}?tab=repositories) · [About this profile](./SETUP.md)\n']
+        md.append(f'<a href="{repo["url"]}">'+picture('repo-'+repo['name'], repo['name']+' — view repository')+'</a>\n')
+    md += ['### Toolkit\n', picture('toolkit', 'Python · FastAPI · JavaScript · TypeScript · PostgreSQL · Docker')+'\n',
+           '**Backend:** Python, FastAPI · **Interfaces:** JavaScript, TypeScript · **Data & delivery:** PostgreSQL, Docker, GitHub Actions\n',
+           '### Activity\n', picture('heatmap', 'My GitHub contributions over the past year')+'\n', picture('activity', 'Monthly contributions, active days and streaks')+'\n',
+           '---\n', f'[Explore my repositories](https://github.com/{CONFIG["username"]}?tab=repositories) · [Profile source](https://github.com/{CONFIG["username"]}/{CONFIG["username"]})\n']
     (ROOT/'README.md').write_text('\n'.join(md))
     preview = '<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Nikita — GitHub profile preview</title><style>body{margin:0;background:#fff;color:#282722;font-family:Arial,sans-serif}main{max-width:880px;margin:36px auto;padding:20px}img{display:block;width:100%;height:auto;margin-bottom:14px}.tiles{display:flex;gap:1.25%;margin-bottom:14px}.tiles a{width:32.5%}.tiles img{margin:0}a{color:#2455ed}h2{font-size:20px;font-weight:500;margin:28px 0 16px}footer{font-size:13px;margin:25px 0}</style><main>'
-    preview += ''.join(f'<img src="cards/{name}.svg" alt="{name}">' for name in ['hero','heatmap','activity'])
-    preview += '<div class="tiles">'+''.join(f'<a href="{escape(t["url"],quote=True)}"><img src="cards/{t["id"]}.svg" alt="{t["title"]}"></a>' for t in CONFIG['tiles'])+'</div><h2>Selected work</h2>'
-    preview += ''.join(f'<a href="{r["url"]}"><img src="cards/repo-{r["name"]}.svg" alt="{escape(r["name"])}"></a>' for r in featured)
+    preview += picture('hero', 'Nikita Lomovtsev')+'<p>Web applications, bots and automation tools.</p>'
+    preview += '<style>@media(prefers-color-scheme:dark){body{background:#0d1117;color:#eeeae2}a{color:#83a5ff}}</style>'
+    preview += '<div class="tiles">'+''.join(f'<a href="{escape(t["url"],quote=True)}">'+picture(t['id'],t['title'])+'</a>' for t in CONFIG['tiles'])+'</div><h2>Selected work</h2>'
+    preview += ''.join(f'<a href="{r["url"]}">'+picture('repo-'+r['name'], r['name'])+'</a>' for r in featured)
+    preview += '<h2>Toolkit</h2>'+picture('toolkit', 'Development toolkit')+'<h2>Activity</h2>'+picture('heatmap', 'GitHub calendar')+picture('activity', 'Monthly activity')
     preview += '<footer>Built with SVG. Updated daily from GitHub.</footer></main></html>'
     (ROOT/'preview.html').write_text(preview)
-    print(f'Rendered {6+len(featured)} SVG cards and README.md.')
+    print(f'Rendered {8+len(featured)} SVG cards in light and dark themes, plus README.md.')
 
 
 if __name__ == '__main__':
